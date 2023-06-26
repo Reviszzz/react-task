@@ -1,11 +1,13 @@
-import { createContext, useState,useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
 import { tasks as data } from "../data/tasks";
+
 export const TaskContext = createContext();
 
 export function TaskContextProvider(props) {
-  const [tasks, settask] = useState([]);
+  const [tasks, setTasks] = useState([]);
+
   function createTask(task) {
-    settask([
+    setTasks([
       ...tasks,
       {
         title: task.title,
@@ -14,12 +16,21 @@ export function TaskContextProvider(props) {
       },
     ]);
   }
+
+  function CheckTask(taskId) {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, color: (task.color = "green") } : task
+      )
+    );
+  }
+
   function deleteTask(taskId) {
-    settask(tasks.filter((task) => task.id !== taskId));
+    setTasks(tasks.filter((task) => task.id !== taskId));
   }
 
   useEffect(() => {
-    settask(data);
+    setTasks(data);
   }, []);
 
   return (
@@ -28,6 +39,7 @@ export function TaskContextProvider(props) {
         tasks,
         deleteTask,
         createTask,
+        CheckTask,
       }}
     >
       {props.children}
